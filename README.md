@@ -13,7 +13,7 @@ package main
 import (
   "fmt"
 
-  "github.com/thetallpaul/hnscaper"
+  "github.com/thetallpaul/hnscraper"
 )
 
 func main() {
