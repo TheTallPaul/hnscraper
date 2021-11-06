@@ -27,7 +27,7 @@ func main() {
 If you want to select an inclusive range of pages, use `ScrapeMultPages()`:
 
 ```go
-pages := hnscaper.ScrapeMultPages(2,4)
+pages := hnscraper.ScrapeMultPages(2, 4)
 
 // Prints the number of votes on every post for pages 2-4
 for _, page := range pages {
