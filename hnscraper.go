@@ -13,13 +13,13 @@ import (
 
 // A Post is a single HackerNews post and the attributes associated with it.
 type Post struct {
-	Rank        int    // The rank of the post, ie. rank 2 means it's the second highest post on the site
-	Title       string // The title of the post
-	Score       int    // How many 'points' the post has received from voting
-	By          string // The username of the user that submitted the post
-	URL         string // The url link that the post is linking to
-	NumComments int    // How many comments were made on the post at the time of access
-	TimePosted  time.Time
+	Rank        int       // The rank of the post, ie. rank 2 means it's the second highest post on the site
+	Title       string    // The title of the post
+	Score       int       // How many 'points' the post has received from voting
+	By          string    // The username of the user that submitted the post
+	URL         string    // The url link that the post is linking to
+	NumComments int       // How many comments were made on the post at the time of access
+	TimePosted  time.Time // Timestamp when the post was submitted
 }
 
 // A Page is an entire page on HackerNews.
@@ -33,7 +33,7 @@ type Page struct {
 const hackernewsURL = "https://news.ycombinator.com/news?p="
 
 // ScrapePage scrapes a single page from HackerNews.
-// Use `1` for the homepage/mainpage.
+// Use '1' for the homepage/mainpage.
 func ScrapePage(pageNum int) (Page, error) {
 	var page Page
 	var posts []Post
