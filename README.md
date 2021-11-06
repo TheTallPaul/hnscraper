@@ -1,6 +1,7 @@
 # hnscraper
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/thetallpaul/hnscraper.svg)](https://pkg.go.dev/github.com/thetallpaul/hnscraper)
+
 Web scraper for HackerNews.
 While HackerNews has a [fantastic API](https://github.com/HackerNews/API), maybe you'd prefer to scrape the pages directly instead?
 
