@@ -11,16 +11,16 @@ Using `hnscraper` is simple. If you want to request a single page, use `ScrapePa
 package main
 
 import (
-    "fmt"
+  "fmt"
 
-    "github.com/thetallpaul/hnscaper"
+  "github.com/thetallpaul/hnscaper"
 )
 
 func main() {
-    pageTwo := hnscraper.ScapePage(2)
+  pageTwo := hnscraper.ScapePage(2)
 
-    // Prints the first title on the second page
-    fmt.Println(pageTwo.Posts[0].Title)
+  // Prints the first title on the second page
+  fmt.Println(pageTwo.Posts[0].Title)
 }
 ```
 
@@ -31,8 +31,8 @@ pages := hnscaper.ScrapeMultPages(2,4)
 
 // Prints the number of votes on every post for pages 2-4
 for _, page := range pages {
-    for _, post := range page.Posts {
-        fmt.Printf("Page: %d, Rank: %d, Votes: %d", page.Num, post.Rank, post.Votes)
-    }
+  for _, post := range page.Posts {
+    fmt.Printf("Page: %d, Rank: %d, Votes: %d\n", page.Num, post.Rank, post.Votes)
+  }
 }
 ```
