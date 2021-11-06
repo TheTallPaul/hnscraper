@@ -11,25 +11,62 @@ import (
 	"golang.org/x/net/html"
 )
 
+// A Post is a single HackerNews post and the attributes associated with it.
 type Post struct {
-	Rank        int
-	Title       string
-	Score       int
-	By          string
-	URL         string
-	NumComments int
+	Rank        int    // The rank of the post, ie. rank 2 means it's the second highest post on the site
+	Title       string // The title of the post
+	Score       int    // How many 'points' the post has received from voting
+	By          string // The username of the user that submitted the post
+	URL         string // The url link that the post is linking to
+	NumComments int    // How many comments were made on the post at the time of access
 	TimePosted  time.Time
 }
 
+// A Page is an entire page on HackerNews.
+// It holds every Post on the page and tracks when the retrieval was done.
 type Page struct {
-	Posts     []Post
-	Num       int
-	Retrieved time.Time
+	Posts     []Post    // All the posts on the page
+	Num       int       // The page number. Page 1 is the homepage/mainpage
+	Retrieved time.Time // The time the request for the page was completed
 }
 
 const hackernewsURL = "https://news.ycombinator.com/news?p="
 
-func ScrapePages(startPage, endPage int) ([]Page, error) {
+// ScrapePage scrapes a single page from HackerNews.
+// Use `1` for the homepage/mainpage.
+func ScrapePage(pageNum int) (Page, error) {
+	var page Page
+	var posts []Post
+
+	if pageNum < 1 {
+		return page, errors.New("page number must be a positive integer")
+	}
+
+	doc, err := htmlquery.LoadURL(hackernewsURL + strconv.Itoa(pageNum))
+	retrievedTime := time.Now()
+
+	if err != nil {
+		return page, err
+	}
+
+	listNodes := htmlquery.Find(doc, "//table[contains(@class, 'itemlist')]/tbody/tr")
+
+	for i := 0; i < len(listNodes)-2; i += 3 {
+		subtext := htmlquery.FindOne(listNodes[i+1], "/td[contains(@class, 'subtext')]")
+		post, err := getPost(listNodes[i], subtext)
+		if err != nil {
+			return page, err
+		}
+
+		posts = append(posts, post)
+	}
+
+	page = Page{Posts: posts, Num: pageNum, Retrieved: retrievedTime}
+	return page, nil
+}
+
+// ScrapeMultPages scrapes all pages from the starting page number to the ending page number, inclusive.
+func ScrapeMultPages(startPage, endPage int) ([]Page, error) {
 	var pages []Page
 
 	if startPage < 1 || endPage < 1 {
@@ -49,36 +86,6 @@ func ScrapePages(startPage, endPage int) ([]Page, error) {
 	}
 
 	return pages, nil
-}
-
-func ScrapePage(pageNum int) (Page, error) {
-	var page Page
-	var posts []Post
-
-	if pageNum < 1 {
-		return page, errors.New("page number must be a positive integer")
-	}
-
-	retrievedTime := time.Now()
-	doc, err := htmlquery.LoadURL(hackernewsURL + strconv.Itoa(pageNum))
-	if err != nil {
-		return page, err
-	}
-
-	listNodes := htmlquery.Find(doc, "//table[contains(@class, 'itemlist')]/tbody/tr")
-
-	for i := 0; i < len(listNodes)-2; i += 3 {
-		subtext := htmlquery.FindOne(listNodes[i+1], "/td[contains(@class, 'subtext')]")
-		post, err := getPost(listNodes[i], subtext)
-		if err != nil {
-			return page, err
-		}
-
-		posts = append(posts, post)
-	}
-
-	page = Page{Posts: posts, Num: pageNum, Retrieved: retrievedTime}
-	return page, nil
 }
 
 func getPost(titleNode, subtextNode *html.Node) (Post, error) {
